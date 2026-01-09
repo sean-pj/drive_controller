@@ -11,22 +11,42 @@ class DriveManager(Node):
         self.subscription = self.create_subscription(String, 'topic', self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
 
-        self.control_type = ["diff", 0]
-
-    def listener_callback(self, msg):
-        self.control_type = msg.data.split(", ")
-        self.get_logger().info('Control type is: %s, Angle is: %s' % (self.control_type[0], self.control_type[1]))
+        self.control_type = "diff"
+        self.angle = 0
 
     '''
     Steering 
     '''
-    def diff():
-        self.get_logger().info('')
+    def diff(self):
+        self.get_logger().info('diff')
+    
     '''
     Cartesian
     '''
+    def cart(self):
+        self.get_logger().info('cart')
 
-    def cart():
+    '''
+    One point turn
+    '''
+    def turn(self):
+        self.get_logger().info('turn')
+
+
+    def listener_callback(self, msg):
+        self.control_type = msg.data.split(", ")[0]
+        self.angle = int(msg.data.split(", ")[1])
+        self.get_logger().info(f"Control type is: {self.control_type}, Angle is: {self.angle}")
+
+        if (self.control_type == "diff"):
+            self.diff()
+        elif (self.control_type == "cart"):
+            self.cart()
+        elif (self.control_type == "turn"):
+            self.turn()
+        else:
+            self.get_logger().error(f"Invalid control type. Received: {self.control_type}")
+
 
 
 
